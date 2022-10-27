@@ -24,7 +24,10 @@ namespace AlinSpace.Parcel
 
         string PrepareName(string name)
         {
-            return name?.Trim();
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException(nameof(name));
+
+            return name.Trim();
         }
 
         public static Parcel New(string? workspacePath = null)
@@ -58,6 +61,8 @@ namespace AlinSpace.Parcel
                 File.Delete(filePath);
             }
 
+            WriteMetadata();
+
             ZipFile.CreateFromDirectory(workspace.PathToWorkspace, filePath);
 
             if (resetAfterPacking)
@@ -75,6 +80,8 @@ namespace AlinSpace.Parcel
 
             filePath = PathHelper.MakeRoot(filePath);
             ZipFile.ExtractToDirectory(filePath, workspace.PathToWorkspace);
+
+            ReadMetadata();
         }
 
         public void Reset()
@@ -88,6 +95,47 @@ namespace AlinSpace.Parcel
                 .GetFiles(workspace.FilesPath)
                 .Select(x => Path.GetFileName(x));
         }
+
+        #region Metadata
+
+        public IDictionary<string, string> Metadata { get; set; } = new Dictionary<string, string>();
+
+        void ReadMetadata()
+        {
+            var metadataFilePath = Path.Combine(workspace.PathToWorkspace, "metadata.json");
+
+            if (!File.Exists(metadataFilePath))
+            {
+                Metadata = new Dictionary<string, string>();
+                return;
+            }
+
+            var metadataJson = File.ReadAllText(metadataFilePath);
+
+            if (metadataJson == null || string.IsNullOrWhiteSpace(metadataJson))
+            {
+                Metadata = new Dictionary<string, string>();
+                return;
+            }
+
+            Metadata = JsonSerializer.Deserialize<IDictionary<string, string>>(metadataJson) ?? new Dictionary<string, string>();
+        }
+
+        void WriteMetadata()
+        {
+            var metadataFilePath = Path.Combine(workspace.PathToWorkspace, "metadata.json");
+            var metadataJson = JsonSerializer.Serialize(Metadata);
+            
+            File.WriteAllText(metadataFilePath, metadataJson);
+        }
+
+        public Parcel CopyMetadataFromParcel(Parcel parcel)
+        {
+            Metadata = new Dictionary<string, string>(parcel.Metadata);
+            return this;
+        }
+
+        #endregion
 
         #region Write
 
