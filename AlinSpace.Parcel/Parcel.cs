@@ -113,6 +113,30 @@ namespace AlinSpace.Parcel
             return this;
         }
 
+        #endregion
+
+        #region Read
+
+        public string ReadText(string name)
+        {
+            name = PrepareName(name);
+
+            return File.ReadAllText(Path.Combine(workspace.FilesPath, name));
+        }
+
+        public T? ReadJson<T>(string name, JsonSerializerOptions? options = null)
+        {
+            name = PrepareName(name);
+
+            return JsonSerializer.Deserialize<T>(
+                json: File.ReadAllText(Path.Combine(workspace.FilesPath, name)),
+                options: options);
+        }
+
+        #endregion
+
+        #region Copy
+
         public Parcel CopyFile(string name, string filePath)
         {
             name = PrepareName(name);
@@ -129,7 +153,7 @@ namespace AlinSpace.Parcel
         {
             path = PathHelper.MakeRoot(path);
 
-            foreach(var filePath in Directory.GetFiles(path))
+            foreach (var filePath in Directory.GetFiles(path))
             {
                 var request = new FileCopyRequest(filePath);
 
@@ -159,26 +183,6 @@ namespace AlinSpace.Parcel
                 destFileName: Path.Combine(workspace.FilesPath, name));
 
             return this;
-        }
-
-        #endregion
-
-        #region Read
-
-        public string ReadText(string name)
-        {
-            name = PrepareName(name);
-
-            return File.ReadAllText(Path.Combine(workspace.FilesPath, name));
-        }
-
-        public T? ReadJson<T>(string name, JsonSerializerOptions? options = null)
-        {
-            name = PrepareName(name);
-
-            return JsonSerializer.Deserialize<T>(
-                json: File.ReadAllText(Path.Combine(workspace.FilesPath, name)),
-                options: options);
         }
 
         #endregion
