@@ -9,6 +9,10 @@ General file format.
 
 With this library you will never ever have to build any custom file formats anymore. The dynamic parcel format can contain any kind of data.
 
+## How?
+
+When creating a new parcel a tempoary random directory called the **workspace** is created. This directory is used as a temporarly place to keep the files open when working with the parcel file. When the parcel is disposed, this workspace directory will be deleted. 
+
 ## Examples
 
 Lets create a new parcel:
@@ -60,3 +64,25 @@ Versioning is also integrated:
 ```csharp
 using var parcel = Parcel.Open("MyParcel.parcel", NeedsVersion.HigherThan("1.0.2"));
 ```
+
+## Examples Unpacking
+
+You can open one parcel file and unpack another parcel file into it:
+
+```csharp
+using var parcel = Parcel.Open("MyParcel.parcel");
+
+// Unpacks the other parcel file into the parcel and overwrites the resources.
+parcel.Unpack("AnotherParcel.parcel");
+```
+
+Unpacking a parcel file is the same as open a parcel file:
+
+```csharp
+using var parcel = Parcel.Open("MyParcel.parcel");
+
+// Same as above.
+using var parcel = Parcel.New();
+parcel.Unpack("MyParcel.parcel");
+```
+
