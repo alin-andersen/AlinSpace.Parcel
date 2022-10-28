@@ -1,11 +1,15 @@
 ﻿using System.IO.Compression;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace AlinSpace.Parcel
 {
     internal class Specification : ISpecification
     {
-        public Version Version { get; set; } = Constants.CurrentVersion;
+        [JsonIgnore]
+        public Version Version { get; } = Constants.CurrentVersion;
+
+        public Version ParcelVersion { get; set; } = new Version(0, 0, 0);
 
         public DateTime? CreationTimestamp { get; set; }
 

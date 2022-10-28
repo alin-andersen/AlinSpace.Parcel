@@ -54,15 +54,16 @@ namespace AlinSpace.Parcel
         /// </summary>
         /// <param name="parcelFilePath">Parcel file path.</param>
         /// <param name="workspacePath">Workspace path.</param>
+        /// <param name="versioning">Versioning.</param>
         /// <returns>Parcel.</returns>
-        public static Parcel Open(string parcelFilePath, string? workspacePath = null)
+        public static Parcel Open(string parcelFilePath, string? workspacePath = null, IVersioning? versioning = null)
         {
             workspacePath = PrepareWorkspacePath(workspacePath);
 
             var workspace = Workspace.Create(workspacePath);
             var parcel = new Parcel(workspace);
 
-            parcel.Unpack(parcelFilePath);
+            parcel.Unpack(parcelFilePath, versioning: versioning);
 
             return parcel;
         }
@@ -126,7 +127,8 @@ namespace AlinSpace.Parcel
         /// <param name="parcelFilePath">File path to the parcel.</param>
         /// <param name="resetBeforeUnpacking">Reset the parcel beforing unpacking.</param>
         /// <param name="overwriteFiles">Overwrite files in workspace.</param>
-        public void Unpack(string parcelFilePath, bool resetBeforeUnpacking = true, bool overwriteFiles = true)
+        /// <param name="versioning">Versioning.</param>
+        public void Unpack(string parcelFilePath, bool resetBeforeUnpacking = true, bool overwriteFiles = true, IVersioning? versioning = null)
         {
             try
             {
@@ -145,6 +147,8 @@ namespace AlinSpace.Parcel
 
                 ReadSpecificationFromWorkspace();
                 ReadMetadataFromWorkspace();
+
+                versioning?.ThrowIfUnsupported(Specification.ParcelVersion);
             }
             catch(Exception)
             {

@@ -10,7 +10,12 @@ namespace AlinSpace.Parcel
         /// <summary>
         /// Gets or sets the version.
         /// </summary>
-        Version Version { get; set; }
+        Version Version { get; }
+
+        /// <summary>
+        /// Gets or sets the parcel version.
+        /// </summary>
+        Version ParcelVersion { get; set; }
 
         /// <summary>
         /// Gets or sets the creation timestamp.
