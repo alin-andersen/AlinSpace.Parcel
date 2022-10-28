@@ -20,7 +20,7 @@ using var parcel = Parcel.New();
 parcel.AddFile("Image.png", "Desktop/Image.png");
 
 // Add any text.
-parcel.AddText("MyText", "123");
+parcel.CopyFile("MyText", "123");
 
 // Add JSON objects.
 parcel.AddJson<MyObject>("MyObject");
