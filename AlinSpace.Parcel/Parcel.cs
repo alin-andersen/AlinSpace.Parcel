@@ -3,6 +3,9 @@ using System.Text.Json;
 
 namespace AlinSpace.Parcel
 {
+    /// <summary>
+    /// Represents the parcel.
+    /// </summary>
     public sealed class Parcel : IDisposable
     {
         private readonly Workspace workspace;
@@ -30,6 +33,11 @@ namespace AlinSpace.Parcel
             return name.Trim();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="workspacePath"></param>
+        /// <returns></returns>
         public static Parcel New(string? workspacePath = null)
         {
             workspacePath = PrepareWorkspacePath(workspacePath);
@@ -61,7 +69,8 @@ namespace AlinSpace.Parcel
                 File.Delete(filePath);
             }
 
-            WriteMetadata();
+            WriteSpecificationToWorkspace();
+            WriteMetadataToWorkspace();
 
             ZipFile.CreateFromDirectory(workspace.PathToWorkspace, filePath);
 
@@ -81,7 +90,8 @@ namespace AlinSpace.Parcel
             filePath = PathHelper.MakeRoot(filePath);
             ZipFile.ExtractToDirectory(filePath, workspace.PathToWorkspace);
 
-            ReadMetadata();
+            ReadSpecificationFromWorkspace();
+            ReadMetadataFromWorkspace();
         }
 
         public void Reset()
@@ -89,18 +99,29 @@ namespace AlinSpace.Parcel
             workspace.Reset();
         }
 
-        public IEnumerable<string> GetNames()
+        #region Specification
+
+        public ISpecification Specification { get; private set; } = new Specification();
+
+        void ReadSpecificationFromWorkspace()
         {
-            return Directory
-                .GetFiles(workspace.FilesPath)
-                .Select(x => Path.GetFileName(x));
+            var specificationFilePath = Path.Combine(workspace.FilesPath, "specification.json");
+            Specification = AlinSpace.Parcel.Specification.ReadFromJsonFile(specificationFilePath);
         }
+
+        void WriteSpecificationToWorkspace()
+        {
+            var specificationFilePath = Path.Combine(workspace.FilesPath, "specification.json");
+            AlinSpace.Parcel.Specification.WriteFromJsonFile(specificationFilePath, Specification);
+        }
+
+        #endregion
 
         #region Metadata
 
         public IDictionary<string, string> Metadata { get; set; } = new Dictionary<string, string>();
 
-        void ReadMetadata()
+        void ReadMetadataFromWorkspace()
         {
             var metadataFilePath = Path.Combine(workspace.PathToWorkspace, "metadata.json");
 
@@ -121,7 +142,7 @@ namespace AlinSpace.Parcel
             Metadata = JsonSerializer.Deserialize<IDictionary<string, string>>(metadataJson) ?? new Dictionary<string, string>();
         }
 
-        void WriteMetadata()
+        void WriteMetadataToWorkspace()
         {
             var metadataFilePath = Path.Combine(workspace.PathToWorkspace, "metadata.json");
             var metadataJson = JsonSerializer.Serialize(Metadata);
@@ -129,6 +150,11 @@ namespace AlinSpace.Parcel
             File.WriteAllText(metadataFilePath, metadataJson);
         }
 
+        /// <summary>
+        /// Copy metadata from parcel.
+        /// </summary>
+        /// <param name="parcel">Parcel to copy from.</param>
+        /// <returns>Parcel.</returns>
         public Parcel CopyMetadataFromParcel(Parcel parcel)
         {
             Metadata = new Dictionary<string, string>(parcel.Metadata);
@@ -137,8 +163,21 @@ namespace AlinSpace.Parcel
 
         #endregion
 
+        public IEnumerable<string> GetNames()
+        {
+            return Directory
+                .GetFiles(workspace.FilesPath)
+                .Select(x => Path.GetFileName(x));
+        }
+
         #region Write
 
+        /// <summary>
+        /// Writes text.
+        /// </summary>
+        /// <param name="name">Name.</param>
+        /// <param name="text">Text.</param>
+        /// <returns>Parcel.</returns>
         public Parcel WriteText(string name, string text)
         {
             name = PrepareName(name);
@@ -150,6 +189,14 @@ namespace AlinSpace.Parcel
             return this;
         }
 
+        /// <summary>
+        /// Writes JSON object.
+        /// </summary>
+        /// <typeparam name="T">Type of object.</typeparam>
+        /// <param name="name">Name.</param>
+        /// <param name="value">Value.</param>
+        /// <param name="options">Options.</param>
+        /// <returns>Parcel.</returns>
         public Parcel WriteJson<T>(string name, T value, JsonSerializerOptions? options = null)
         {
             name = PrepareName(name);
@@ -165,6 +212,11 @@ namespace AlinSpace.Parcel
 
         #region Read
 
+        /// <summary>
+        /// Reads text.
+        /// </summary>
+        /// <param name="name">Name.</param>
+        /// <returns>Text.</returns>
         public string ReadText(string name)
         {
             name = PrepareName(name);
@@ -172,6 +224,13 @@ namespace AlinSpace.Parcel
             return File.ReadAllText(Path.Combine(workspace.FilesPath, name));
         }
 
+        /// <summary>
+        /// Reads JSON object.
+        /// </summary>
+        /// <typeparam name="T">Type of object.</typeparam>
+        /// <param name="name">Name.</param>
+        /// <param name="options">Options.</param>
+        /// <returns>Value.</returns>
         public T? ReadJson<T>(string name, JsonSerializerOptions? options = null)
         {
             name = PrepareName(name);
@@ -185,6 +244,12 @@ namespace AlinSpace.Parcel
 
         #region Copy
 
+        /// <summary>
+        /// Copy file.
+        /// </summary>
+        /// <param name="name">Name.</param>
+        /// <param name="filePath">File path.</param>
+        /// <returns>Parcel.</returns>
         public Parcel CopyFile(string name, string filePath)
         {
             name = PrepareName(name);
@@ -196,16 +261,25 @@ namespace AlinSpace.Parcel
 
             return this;
         }
-
-        public Parcel CopyFiles(string path, Action<FileCopyRequest> onRequest)
+        
+        /// <summary>
+        /// Copy files.
+        /// </summary>
+        /// <param name="filesPath">Files path.</param>
+        /// <param name="requestHandler">Request handler.</param>
+        /// <returns>Parcel.</returns>
+        public Parcel CopyFiles(string filesPath, Action<IFileCopyRequest> requestHandler)
         {
-            path = PathHelper.MakeRoot(path);
+            filesPath = PathHelper.MakeRoot(filesPath);
 
-            foreach (var filePath in Directory.GetFiles(path))
+            if (!Directory.Exists(filesPath))
+                throw new Exception("Files path does not exist.");
+
+            foreach (var filePath in Directory.GetFiles(filesPath))
             {
                 var request = new FileCopyRequest(filePath);
 
-                onRequest(request);
+                requestHandler(request);
 
                 if (request.Accept)
                 {
@@ -218,10 +292,15 @@ namespace AlinSpace.Parcel
                 }
             }
 
-
             return this;
         }
 
+        /// <summary>
+        /// Copy from parcel.
+        /// </summary>
+        /// <param name="parcel">Parcel.</param>
+        /// <param name="name">Name.</param>
+        /// <returns>Parcel.</returns>
         public Parcel CopyFromParcel(Parcel parcel, string name)
         {
             name = PrepareName(name);
@@ -233,10 +312,32 @@ namespace AlinSpace.Parcel
             return this;
         }
 
+        /// <summary>
+        /// Copy all from parcel.
+        /// </summary>
+        /// <param name="parcel">Parcel to copy from.</param>
+        /// <returns>Parcel.</returns>
+        public Parcel CopyAllFromParcel(Parcel parcel)
+        {
+            var items = GetNames();
+
+            foreach(var item in items)
+            {
+                CopyFromParcel(parcel, item);
+            }
+
+            return this;
+        }
+
         #endregion
 
-        #region Remove
+        #region Delete
 
+        /// <summary>
+        /// Deletes resource.
+        /// </summary>
+        /// <param name="name">Name.</param>
+        /// <returns>Parcel.</returns>
         public Parcel Delete(string name)
         {
             name = PrepareName(name);
@@ -245,10 +346,31 @@ namespace AlinSpace.Parcel
             return this;
         }
 
+        /// <summary>
+        /// Deletes all resources.
+        /// </summary>
+        /// <returns>Parcel.</returns>
+        public Parcel DeleteAll()
+        {
+            var items = GetNames();
+
+            foreach (var item in items)
+            {
+                Delete(item);
+            }
+
+            return this;
+        }
+
         #endregion
 
         #region Open
 
+        /// <summary>
+        /// Open file stream.
+        /// </summary>
+        /// <param name="name">Name.</param>
+        /// <returns>File stream.</returns>
         public FileStream OpenFile(string name)
         {
             name = PrepareName(name);
@@ -260,6 +382,11 @@ namespace AlinSpace.Parcel
                 share: FileShare.Write);
         }
 
+        /// <summary>
+        /// Open file stream read only.
+        /// </summary>
+        /// <param name="name">Name.</param>
+        /// <returns>File stream.</returns>
         public FileStream OpenFileReadOnly(string name)
         {
             name = PrepareName(name);
@@ -271,6 +398,11 @@ namespace AlinSpace.Parcel
                 share: FileShare.Read);
         }
 
+        /// <summary>
+        /// Open file stream write only.
+        /// </summary>
+        /// <param name="name">Name.</param>
+        /// <returns>File stream.</returns>
         public FileStream OpenFileWriteOnly(string name)
         {
             name = PrepareName(name);
@@ -284,6 +416,9 @@ namespace AlinSpace.Parcel
 
         #endregion
 
+        /// <summary>
+        /// Dispose.
+        /// </summary>
         public void Dispose()
         {
             workspace.Dispose();
