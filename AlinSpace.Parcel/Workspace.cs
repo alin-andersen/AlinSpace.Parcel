@@ -5,17 +5,12 @@
     /// </summary>
     public class Workspace : IDisposable
     {
-        private readonly OneTimeSwitch ots = new OneTimeSwitch();
+        private readonly OneTimeSwitch ots = new();
 
         /// <summary>
         /// Gets the path to the workspace.
         /// </summary>
         public string PathToWorkspace { get; }
-
-        /// <summary>
-        /// Gets the configuration file path.
-        /// </summary>
-        public string ConfigFilePath { get; }
 
         /// <summary>
         /// Gets the files path.
@@ -29,7 +24,6 @@
         private Workspace(string pathToWorkspace)
         {
             PathToWorkspace = PathHelper.MakeRoot(pathToWorkspace);
-            ConfigFilePath = Path.Combine(PathToWorkspace, "config.json");
             FilesPath = Path.Combine(PathToWorkspace, "files");
 
             Setup();
@@ -81,6 +75,9 @@
             Setup();
         }
 
+        /// <summary>
+        /// Resets the files of the workspace.
+        /// </summary>
         public void ResetFiles()
         {
             ots.ThrowObjectDisposedIfSet<Workspace>();

@@ -1,20 +1,15 @@
-﻿using System.Text.Json;
+﻿using System.IO.Compression;
+using System.Text.Json;
 
 namespace AlinSpace.Parcel
 {
     internal class Specification : ISpecification
     {
-        public Version Version { get; set; } = new Version(1, 0, 0);
+        public Version Version { get; set; } = Constants.CurrentVersion;
 
         public DateTime? CreationTimestamp { get; set; }
 
-        #region Compression
-
-        public bool CompressFiles { get; set; }
-
-        public CompressAlgorithm CompressAlgorithm { get; set; }
-
-        #endregion
+        public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Optimal;
 
         public static Specification ReadFromJsonFile(string filePath)
         {

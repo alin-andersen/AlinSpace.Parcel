@@ -15,9 +15,8 @@
 
         public bool Accept { get; set; } = false;
 
-        public string? Name { get; set; }
+        public string? ResourceName { get; set; }
 
-        /// <param name="filePath"></param>
         public FileCopyRequest(string filePath)
         {
             FilePath = filePath;

@@ -30,6 +30,6 @@
         /// <summary>
         /// Gets or sets the name to be used when copied.
         /// </summary>
-        string? Name { get; set; }
+        string? ResourceName { get; set; }
     }
 }
