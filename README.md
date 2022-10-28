@@ -17,19 +17,19 @@ Lets create a new parcel:
 using var parcel = Parcel.New();
 
 // Add file.
-parcel.AddFile("Image.png", "Desktop/Image.png");
+parcel.CopyFile("Image.png", "Desktop/Image.png");
 
 // Add any text.
-parcel.CopyFile("MyText", "123");
+parcel.WriteText("MyText", "123");
 
 // Add JSON objects.
-parcel.AddJson<MyObject>("MyObject");
-
-// Resets the whole parcel.
-parcel.Reset();
+parcel.WriteJson<MyObject>("MyObject");
 
 // Delets the text.
 parcel.Delete("MyText");
+
+// Resets the whole parcel.
+parcel.Reset();
 ```
 
 Then pack and output the parcel file:
