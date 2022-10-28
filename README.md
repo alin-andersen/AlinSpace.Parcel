@@ -9,6 +9,15 @@ Dynamic parcel file format.
 
 With this library you will never ever have to build any custom file formats anymore. The dynamic parcel format can contain any kind of data.
 
+## Features
+
+- Versioning support
+- Metadata support
+- JSON support
+- Add any file to the parcel
+- Parcel is compressed (ZIP)
+- Parcel can be unpacked by un-zipping it (you can open it and do stuff without needing the library at all)
+
 ## How?
 
 When creating a new parcel a tempoary random directory called the **workspace** is created. This directory is used as a temporarly place to keep the files open when working with the parcel file. When the parcel is disposed, this workspace directory will be deleted. 
