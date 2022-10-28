@@ -1,0 +1,19 @@
+{
+  "PathToSolutionFile": "AlinSpace.Parcel.sln",
+  "PathToLocalNugetFolder": "C:\\AlinSpace\\Nuget",
+  "PathToDebugFiles": "C:\\AlinSpace\\Pdbs",
+  "BuildInDebugConfiguration": true,
+  "Author": "Alin Andersen",
+  "Copyright": "© 2022 Alin Andersen",
+  "RepositoryUrl": "https://github.com/onixion/AlinSpace.Parcel",
+  "ProjectUrl": "https://github.com/onixion/AlinSpace.Parcel",
+  "Tags": "alinspace; alin; parcel; package; file; files",
+  "Projects": [
+
+    {
+      "Name": "AlinSpace.Parcel",
+      "Tags": ""
+    }
+
+  ]
+}
