@@ -39,6 +39,11 @@ parcel.Pack("MyParcel.parcel");
 ```
 
 This packs the parcel into a single file.
+You can also unpack a parcel file:
+
+```csharp
+parcel.Unpack("MyParcel.parcel");
+```
 
 ## Examples Metadata
 
