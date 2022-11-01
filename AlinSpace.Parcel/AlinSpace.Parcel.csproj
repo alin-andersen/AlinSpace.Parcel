@@ -4,15 +4,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Copyright>© 2022 Alin Andersen</Copyright>
-    <PackageTags>alinspace; alin; parcel; package; file; files,</PackageTags>
+    <PackageTags>alinspace; alin; parcel; package; file; files; format</PackageTags>
     <RepositoryUrl>https://github.com/onixion/AlinSpace.Parcel</RepositoryUrl>
-    <Version>1.0.2</Version>
+    <Version>1.0.6</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageIcon>Icon.png</PackageIcon>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="AlinSpace" Version="6.0.6" />
-  </ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Icon.png">
 			<Pack>True</Pack>
@@ -21,6 +18,9 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="README.md" Pack="true" PackagePath="" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="AlinSpace" Version="6.0.8" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Update="Icon.png">

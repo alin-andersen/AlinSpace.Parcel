@@ -32,7 +32,7 @@
         {
             public AnyImpl(Version version) : base(version) { }
 
-            public override void ThrowIfUnsupported(Version parcelVersion)
+            public override void ThrowIfUnsupported(Version? parcelVersion)
             {
             }
         }

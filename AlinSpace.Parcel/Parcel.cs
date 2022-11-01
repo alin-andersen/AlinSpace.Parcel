@@ -9,6 +9,7 @@ namespace AlinSpace.Parcel
     /// </summary>
     public sealed class Parcel : IDisposable
     {
+        private readonly OneTimeSwitch ots = new();
         private readonly Workspace workspace;
 
         private Parcel(Workspace workspace)
@@ -75,6 +76,8 @@ namespace AlinSpace.Parcel
         /// <param name="resetAfterPacking">Reset the parcel after packing it.</param>
         public void Pack(string parcelFilePath, bool resetAfterPacking = true)
         {
+            ots.ThrowObjectDisposedIfSet<Parcel>();
+
             parcelFilePath = PathHelper.MakeRoot(parcelFilePath);
 
             // Check if parcel file is a directory path.
@@ -130,6 +133,8 @@ namespace AlinSpace.Parcel
         /// <param name="versioning">Versioning.</param>
         public void Unpack(string parcelFilePath, bool resetBeforeUnpacking = true, bool overwriteFiles = true, IVersioning? versioning = null)
         {
+            ots.ThrowObjectDisposedIfSet<Parcel>();
+
             try
             {
                 if (resetBeforeUnpacking)
@@ -162,6 +167,7 @@ namespace AlinSpace.Parcel
         /// </summary>
         public void Reset()
         {
+            ots.ThrowObjectDisposedIfSet<Parcel>();
             workspace.Reset();
         }
 
@@ -239,6 +245,8 @@ namespace AlinSpace.Parcel
         /// <returns>Parcel.</returns>
         public Parcel CopyMetadataFromParcel(Parcel parcel)
         {
+            ots.ThrowObjectDisposedIfSet<Parcel>();
+
             Metadata = new Dictionary<string, string>(parcel.Metadata);
             return this;
         }
@@ -251,6 +259,8 @@ namespace AlinSpace.Parcel
         /// <returns>Enumerable of resource names.</returns>
         public IEnumerable<string> GetResourceNames()
         {
+            ots.ThrowObjectDisposedIfSet<Parcel>();
+
             return Directory
                 .GetFiles(workspace.FilesPath)
                 .Select(x => Path.GetFileName(x));
@@ -266,6 +276,11 @@ namespace AlinSpace.Parcel
         /// <returns>Parcel.</returns>
         public Parcel WriteText(string resourceName, string text)
         {
+            ots.ThrowObjectDisposedIfSet<Parcel>();
+
+            if (string.IsNullOrWhiteSpace(resourceName))
+                throw new ArgumentNullException(nameof(resourceName));
+
             resourceName = PrepareResourceName(resourceName);
 
             File.WriteAllText(
@@ -285,6 +300,11 @@ namespace AlinSpace.Parcel
         /// <returns>Parcel.</returns>
         public Parcel WriteJson<T>(string resourceName, T value, JsonSerializerOptions? options = null)
         {
+            ots.ThrowObjectDisposedIfSet<Parcel>();
+
+            if (string.IsNullOrWhiteSpace(resourceName))
+                throw new ArgumentNullException(nameof(resourceName));
+
             resourceName = PrepareResourceName(resourceName);
 
             File.WriteAllText(
@@ -305,6 +325,11 @@ namespace AlinSpace.Parcel
         /// <returns>Text.</returns>
         public string ReadText(string resourceName)
         {
+            ots.ThrowObjectDisposedIfSet<Parcel>();
+
+            if (string.IsNullOrWhiteSpace(resourceName))
+                throw new ArgumentNullException(nameof(resourceName));
+
             resourceName = PrepareResourceName(resourceName);
 
             return File.ReadAllText(Path.Combine(workspace.FilesPath, resourceName));
@@ -319,6 +344,11 @@ namespace AlinSpace.Parcel
         /// <returns>Value.</returns>
         public T? ReadJson<T>(string resourceName, JsonSerializerOptions? options = null)
         {
+            ots.ThrowObjectDisposedIfSet<Parcel>();
+
+            if (string.IsNullOrWhiteSpace(resourceName))
+                throw new ArgumentNullException(nameof(resourceName));
+
             resourceName = PrepareResourceName(resourceName);
 
             return JsonSerializer.Deserialize<T>(
@@ -338,8 +368,17 @@ namespace AlinSpace.Parcel
         /// <returns>Parcel.</returns>
         public Parcel CopyFile(string resourceName, string filePath)
         {
-            resourceName = PrepareResourceName(resourceName);
+            ots.ThrowObjectDisposedIfSet<Parcel>();
+
+            if (string.IsNullOrWhiteSpace(resourceName))
+                throw new ArgumentNullException(nameof(resourceName));
+
+            if (string.IsNullOrWhiteSpace(filePath))
+                throw new ArgumentNullException(nameof(filePath));
+
             filePath = PathHelper.MakeRoot(filePath);
+
+            resourceName = PrepareResourceName(resourceName);
 
             File.Copy(
                 sourceFileName: filePath,
@@ -356,6 +395,14 @@ namespace AlinSpace.Parcel
         /// <returns>Parcel.</returns>
         public Parcel CopyFiles(string filesPath, Action<IFileCopyRequest> requestHandler)
         {
+            ots.ThrowObjectDisposedIfSet<Parcel>();
+
+            if (string.IsNullOrWhiteSpace(filesPath))
+                throw new ArgumentNullException(nameof(filesPath));
+
+            if (requestHandler == null)
+                throw new ArgumentNullException(nameof(requestHandler));
+
             filesPath = PathHelper.MakeRoot(filesPath);
 
             if (!Directory.Exists(filesPath))
@@ -389,6 +436,14 @@ namespace AlinSpace.Parcel
         /// <returns>Parcel.</returns>
         public Parcel CopyFromParcel(Parcel parcel, string resourceName)
         {
+            ots.ThrowObjectDisposedIfSet<Parcel>();
+
+            if (parcel == null)
+                throw new ArgumentNullException(nameof(parcel));
+
+            if (string.IsNullOrWhiteSpace(resourceName))
+                throw new ArgumentNullException(nameof(resourceName));
+
             resourceName = PrepareResourceName(resourceName);
 
             File.Copy(
@@ -405,6 +460,11 @@ namespace AlinSpace.Parcel
         /// <returns>Parcel.</returns>
         public Parcel CopyAllFromParcel(Parcel parcel)
         {
+            ots.ThrowObjectDisposedIfSet<Parcel>();
+
+            if (parcel == null)
+                throw new ArgumentNullException(nameof(parcel));
+
             var items = GetResourceNames();
 
             foreach(var item in items)
@@ -426,6 +486,11 @@ namespace AlinSpace.Parcel
         /// <returns>Parcel.</returns>
         public Parcel Delete(string resourceName)
         {
+            ots.ThrowObjectDisposedIfSet<Parcel>();
+            
+            if (string.IsNullOrWhiteSpace(resourceName))
+                throw new ArgumentNullException(nameof(resourceName));
+
             resourceName = PrepareResourceName(resourceName);
 
             File.Delete(Path.Combine(workspace.FilesPath, resourceName));
@@ -438,6 +503,8 @@ namespace AlinSpace.Parcel
         /// <returns>Parcel.</returns>
         public Parcel DeleteAll()
         {
+            ots.ThrowObjectDisposedIfSet<Parcel>();
+
             var items = GetResourceNames();
 
             foreach (var item in items)
@@ -459,6 +526,11 @@ namespace AlinSpace.Parcel
         /// <returns>File stream.</returns>
         public FileStream OpenFile(string resourceName)
         {
+            ots.ThrowObjectDisposedIfSet<Parcel>();
+
+            if (string.IsNullOrWhiteSpace(resourceName))
+                throw new ArgumentNullException(nameof(resourceName));
+
             resourceName = PrepareResourceName(resourceName);
 
             return new FileStream(
@@ -475,6 +547,11 @@ namespace AlinSpace.Parcel
         /// <returns>File stream.</returns>
         public FileStream OpenFileReadOnly(string resourceName)
         {
+            ots.ThrowObjectDisposedIfSet<Parcel>();
+
+            if (string.IsNullOrWhiteSpace(resourceName))
+                throw new ArgumentNullException(nameof(resourceName));
+
             resourceName = PrepareResourceName(resourceName);
 
             return new FileStream(
@@ -491,6 +568,11 @@ namespace AlinSpace.Parcel
         /// <returns>File stream.</returns>
         public FileStream OpenFileWriteOnly(string resourceName)
         {
+            ots.ThrowObjectDisposedIfSet<Parcel>();
+
+            if (string.IsNullOrWhiteSpace(resourceName))
+                throw new ArgumentNullException(nameof(resourceName));
+
             resourceName = PrepareResourceName(resourceName);
 
             return new FileStream(
@@ -507,6 +589,9 @@ namespace AlinSpace.Parcel
         /// </summary>
         public void Dispose()
         {
+            if (!ots.TrySet())
+                return;
+
             workspace.Dispose();
         }
     }
