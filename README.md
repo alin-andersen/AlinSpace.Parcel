@@ -15,7 +15,7 @@ With this library you will never ever have to build any custom file formats anym
 - Metadata support
 - JSON support
 - Add any file to the parcel
-- Parcel is compressed (ZIP)
+- Parcel is archived and compressed (ZIP/deflate).
 - Parcel can be unpacked by un-zipping it (you can open it and do stuff without needing the library at all)
 
 ## How?
