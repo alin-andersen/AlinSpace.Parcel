@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlinSpace.Parcel", "AlinSpace.Parcel\AlinSpace.Parcel.csproj", "{6143FD88-3CC6-451D-8CF3-0ECCBB4A8C87}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlinSpace.Parcel", "AlinSpace.Parcel\AlinSpace.Parcel.csproj", "{6143FD88-3CC6-451D-8CF3-0ECCBB4A8C87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlinSpace.Parcel.UnitTests", "AlinSpace.Parcel.UnitTests\AlinSpace.Parcel.UnitTests.csproj", "{571E90FE-9D38-45BA-85B6-EAA3130055D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlinSpace.Parcel.UnitTests", "AlinSpace.Parcel.UnitTests\AlinSpace.Parcel.UnitTests.csproj", "{571E90FE-9D38-45BA-85B6-EAA3130055D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlinSpace.Parcel.Playground", "AlinSpace.Parcel.Playground\AlinSpace.Parcel.Playground.csproj", "{919B3EF8-A6DF-4A25-B0DD-60659F918C80}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{571E90FE-9D38-45BA-85B6-EAA3130055D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{571E90FE-9D38-45BA-85B6-EAA3130055D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{571E90FE-9D38-45BA-85B6-EAA3130055D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{919B3EF8-A6DF-4A25-B0DD-60659F918C80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{919B3EF8-A6DF-4A25-B0DD-60659F918C80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{919B3EF8-A6DF-4A25-B0DD-60659F918C80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{919B3EF8-A6DF-4A25-B0DD-60659F918C80}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
