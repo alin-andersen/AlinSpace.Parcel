@@ -29,7 +29,7 @@
             Setup();
         }
 
-        void Setup()
+        private void Setup()
         {
             ots.ThrowObjectDisposedIfSet<Workspace>();
 

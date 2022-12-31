@@ -17,7 +17,7 @@ namespace AlinSpace.Parcel
             this.workspace = workspace;
         }
 
-        static string PrepareWorkspacePath(string? path)
+        private static string PrepareWorkspacePath(string? path)
         {
             if (string.IsNullOrWhiteSpace(path))
             {
@@ -27,7 +27,7 @@ namespace AlinSpace.Parcel
             return path;
         }
 
-        string PrepareResourceName(string resourceName)
+        private string PrepareResourceName(string resourceName)
         {
             if (string.IsNullOrWhiteSpace(resourceName))
                 throw new ArgumentNullException(nameof(resourceName));
@@ -74,7 +74,7 @@ namespace AlinSpace.Parcel
         /// </summary>
         /// <param name="parcelFilePath">File path to save the parcel to.</param>
         /// <param name="resetAfterPacking">Reset the parcel after packing it.</param>
-        public void Pack(string parcelFilePath, bool resetAfterPacking = true)
+        public void Pack(string parcelFilePath, bool resetAfterPacking = false)
         {
             ots.ThrowObjectDisposedIfSet<Parcel>();
 
@@ -86,21 +86,7 @@ namespace AlinSpace.Parcel
                 throw new Exception($"Parcel file path is a directory path");
             }
 
-            #region Create directory of parcel file if it does not exist
-
-            var parcelDirectoryPath = Path.GetDirectoryName(parcelFilePath);
-
-            if (string.IsNullOrWhiteSpace(parcelDirectoryPath))
-            {
-                throw new Exception($"Parcel file directory path not found.");
-            }
-
-            if (!Directory.Exists(parcelDirectoryPath))
-            {
-                Directory.CreateDirectory(parcelDirectoryPath);
-            }
-
-            #endregion
+            PathHelper.CreateDirectoryIfNotExist(parcelFilePath);
 
             // Delete file if it does already exist.
             if (File.Exists(parcelFilePath))

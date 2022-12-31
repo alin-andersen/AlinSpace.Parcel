@@ -7,9 +7,9 @@
     {
         public string FilePath { get; }
 
-        public string FileName => Path.GetFileName(FilePath);
+        public string Filename => Path.GetFileName(FilePath);
 
-        public string FileNameWithoutExtension => Path.GetFileNameWithoutExtension(FilePath);
+        public string FilenameWithoutExtension => Path.GetFileNameWithoutExtension(FilePath);
 
         public string FileExtension => Path.GetExtension(FilePath)[1..];
 

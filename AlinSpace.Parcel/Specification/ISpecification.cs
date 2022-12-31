@@ -8,9 +8,9 @@ namespace AlinSpace.Parcel
     public interface ISpecification
     {
         /// <summary>
-        /// Gets or sets the version.
+        /// Gets or sets the library version.
         /// </summary>
-        Version Version { get; }
+        Version LibraryVersion { get; }
 
         /// <summary>
         /// Gets or sets the parcel version.

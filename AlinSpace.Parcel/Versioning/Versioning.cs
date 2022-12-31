@@ -1,5 +1,8 @@
 ﻿namespace AlinSpace.Parcel
 {
+    /// <summary>
+    /// Represents the versioning.
+    /// </summary>
     public abstract class Versioning : IVersioning
     {
         public Version Version { get; private set; }
@@ -53,7 +56,9 @@
             public override void ThrowIfUnsupported(Version? parcelVersion)
             {
                 if (parcelVersion <= Version)
+                {
                     throw new ParcelVersionUnsupportedException(Version, parcelVersion);
+                }
             }
         }
 
@@ -83,7 +88,9 @@
             public override void ThrowIfUnsupported(Version? parcelVersion)
             {
                 if (parcelVersion < Version)
+                {
                     throw new ParcelVersionUnsupportedException(Version, parcelVersion);
+                }
             }
         }
 

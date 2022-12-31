@@ -8,14 +8,14 @@
         string FilePath { get; }
 
         /// <summary>
-        /// Gets the file name.
+        /// Gets the filename.
         /// </summary>
-        string FileName { get; }
+        string Filename { get; }
 
         /// <summary>
-        /// Gets the file name without extension.
+        /// Gets the filename without extension.
         /// </summary>
-        string FileNameWithoutExtension { get; }
+        string FilenameWithoutExtension { get; }
 
         /// <summary>
         /// Gets the file extension.
